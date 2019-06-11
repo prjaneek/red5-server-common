@@ -21,28 +21,28 @@ package org.red5.server.api.statistics.support;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Counts numbers used by the statistics. Keeps track of current, maximum and total numbers.
+ * Counts numbers used by the statistics. Keeps track of current and total numbers.
  * 
  * @author The Red5 Project
  * @author Joachim Bauch (jojo@struktur.de)
  */
 public class StatisticsCounter {
 
-    /** Current number. */
+    /** Current number */
     private AtomicInteger current = new AtomicInteger();
 
-    /** Total number. */
-    private AtomicInteger total = new AtomicInteger();
+    /** Total number */
+    private int total;
 
-    /** Maximum number. */
-    private AtomicInteger max = new AtomicInteger();
+    /** Highest / max number during collection */
+    private int max;
 
     /**
      * Increment statistics by one.
      */
     public void increment() {
-        total.incrementAndGet();
-        max.compareAndSet(current.intValue(), current.incrementAndGet());
+        max = Math.max(max, current.incrementAndGet());
+        total++;
     }
 
     /**
@@ -67,16 +67,16 @@ public class StatisticsCounter {
      * @return total
      */
     public int getTotal() {
-        return total.intValue();
+        return total;
     }
 
     /**
-     * Get maximum number.
+     * Get maximum number. Use total instead.
      * 
      * @return max
      */
     public int getMax() {
-        return max.intValue();
+        return max;
     }
 
     /* (non-Javadoc)
@@ -84,7 +84,7 @@ public class StatisticsCounter {
      */
     @Override
     public String toString() {
-        return "StatisticsCounter [current=" + current + ", total=" + total + ", max=" + max + "]";
+        return "StatisticsCounter [current=" + current + ", max=" + max + ", total=" + total + "]";
     }
 
 }
